@@ -16,9 +16,16 @@ data class MausamData(
     @SerializedName("current")
     val current: Current,
     @SerializedName("location")
-    val location: Location
+    val location: Location,
+    @SerializedName("forecase")
+    val forecast: ForecastData
 
 ) {
+    data class ForecastData(
+        val data: String,
+        val temperature: String
+    )
+
     data class Current(
         @PrimaryKey(autoGenerate = true)
         val id: Int = 0,
