@@ -1,7 +1,9 @@
 package com.example.mausam.ui.screens
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,13 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Divider
@@ -47,6 +45,12 @@ fun WeatherHome(
     data: MausamData,
     onBackNavClicked: () -> Unit = {}
 ) {
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(id = R.drawable.clear_night_sky_background),
+        contentDescription = null,
+
+    )
 
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -111,12 +115,12 @@ fun WeatherHome(
         ) {
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "${ data.current.tempC } °C")
-            Icon(
-                modifier = Modifier.size(60.dp),
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = "cloud"
+                text = "${ data.current.tempC } °C"
             )
+            Image(
+                modifier = Modifier.size(60.dp),
+                painter = painterResource(R.drawable.partly_cloudy_night),
+                contentDescription = null)
             Text(
                 modifier = Modifier.padding(4.dp),
                 text = data.current.cloud)
@@ -161,6 +165,16 @@ fun WeatherHome(
 fun HomeLayout(data: MausamData,
                city: String) {
     //TODO: Complete the home layout and it will be navigate by weatherCard
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.clear_night_sky_background),
+            contentDescription = null )
+
+
+
+    }
 }
 
 
@@ -222,6 +236,8 @@ val sampleMausamData = MausamData(
 @Preview(showBackground = true)
 fun PreviewWeatherPage() {
 
-    WeatherHome(city = "London", data = sampleMausamData)
+    // WeatherHome(city = "London", data = sampleMausamData)
+    HomeLayout(data = sampleMausamData, city = "London")
+
 
 }
