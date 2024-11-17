@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,11 +28,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.mausam.R
 import com.example.mausam.data.MausamData
 import kotlinx.coroutines.CoroutineScope
@@ -45,26 +50,26 @@ fun WeatherHome(
     data: MausamData,
     onBackNavClicked: () -> Unit = {}
 ) {
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.clear_night_sky_background),
-        contentDescription = null,
-
-    )
+//    Image(
+//        modifier = Modifier,
+//        painter = painterResource(id = R.drawable.clear_night_sky_background),
+//        contentDescription = null,
+//
+//    )
 
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
 
-
     Scaffold (topBar = {
         TopAppBar(
-            modifier = Modifier,
-            title = {
-            Text(
-                modifier = Modifier.padding(start = 96.dp)
-                    ,
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .fillMaxWidth(),
+            title = { Text(modifier = Modifier
+                .padding(start = 72.dp),
                 text = city,
+                fontSize = 44.sp
                 ) },
             navigationIcon = {
                 IconButton(onClick = {
@@ -77,87 +82,28 @@ fun WeatherHome(
                         painter = painterResource(id = R.drawable.baseline_location_city_24),
                         contentDescription = "City-Location",
                         tint = Color.Black,
-
+                        modifier = Modifier.size(56.dp)
                     )
                 }
-
             },
             actions = {
                 IconButton(onClick = {
                     // Open a help and setting box
+                    scope.launch {
+                        scaffoldState.drawerState.open()
+                    }
                 }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = null )
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp))
                 }
             }
         )
-
-    })
-    {
-
-        Text(text = "", modifier = Modifier.padding(it))
-
+    }) {
+        WeatherDetails(data = data, modifier = Modifier.padding(it))
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 80.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Column (
-            modifier = Modifier
-                ,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = "${ data.current.tempC } °C"
-            )
-            Image(
-                modifier = Modifier.size(60.dp),
-                painter = painterResource(R.drawable.partly_cloudy_night),
-                contentDescription = null)
-            Text(
-                modifier = Modifier.padding(4.dp),
-                text = data.current.cloud)
-
-            Divider(
-                color = Color.Gray,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .shadow(
-                        elevation = 8.dp, // Set the elevation for the shadow
-                        shape = RoundedCornerShape(20), // Use RectangleShape for a horizontal line
-                        clip = true // Allow the shadow to extend beyond the bounds of the Divider
-                    )
-            )
-            Spacer(modifier = Modifier.padding(4.dp))
-
-            Column {
-                Row (
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp),
-                        text = "${ data.current.feelslikeC.toString() } °C")
-
-                    Text(
-                        modifier = Modifier.padding(end = 16.dp),
-                        text = "${data.current.gustKph.toString()} kph"
-                    )
-
-                }
-            }
-
-        }
-    }
 
 }
 
@@ -233,11 +179,192 @@ val sampleMausamData = MausamData(
 )
 
 @Composable
+fun WeatherDetails(data: MausamData, modifier: Modifier = Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .fillMaxHeight()
+            .padding(vertical = 80.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center
+    ) {
+        Column (
+            modifier = Modifier
+                .padding(vertical = 80.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row (
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ){
+                Text(
+                    modifier = Modifier
+                        .padding(),
+                    text = data.current.tempC,
+                    fontSize = 68.sp
+                )
+                Text(modifier = Modifier,
+                    text = "°C",
+                    fontSize = 32.sp,
+                    )
+            }
+            Image(
+                modifier = Modifier.size(80.dp),
+                painter = painterResource(R.drawable.partly_cloudy_night),
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = data.current.cloud,
+                fontSize = 16.sp
+            )
+
+            Spacer(modifier)
+            Divider(
+                color = Color.Gray,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .shadow(
+                        elevation = 8.dp, // Set the elevation for the shadow
+                        shape = RoundedCornerShape(20), // Use RectangleShape for a horizontal line
+                        clip = true // Allow the shadow to extend beyond the bounds of the Divider
+                    )
+            )
+
+
+
+
+            HorizontalCard(data = data)
+
+
+
+
+        }
+    }
+}
+
+@Composable
+fun HorizontalCard(
+    data: MausamData
+) {
+
+
+    Column(
+        modifier = Modifier.padding(vertical = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.windDir}")
+                Text(text = "Wind direction")
+
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.windKph}Kph")
+                Text(text = "Wind speed")
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.dewpoStringC}°C")
+                Text(text = "Dew Point")
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.windDegree}°")
+                Text(text = "Wind Degree")
+            }
+        }
+
+        Divider(
+            color = Color.Gray,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .shadow(
+                    elevation = 8.dp, // Set the elevation for the shadow
+                    shape = RoundedCornerShape(20), // Use RectangleShape for a horizontal line
+                    clip = true // Allow the shadow to extend beyond the bounds of the Divider
+                )
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.feelslikeC}°C")
+                Text(text = "Feels like")
+
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.humidity}%")
+                Text(text = "Humidity")
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.pressureMb}hPa")
+                Text(text = "Pressure")
+            }
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${data.current.uv}")
+                Text(text = "UV")
+            }
+        }
+    }
+}
+
+@Composable
+fun SomeInfo(data: MausamData) {
+    Text(text = data.current.isDay.toString())
+}
+
+@Composable
 @Preview(showBackground = true)
 fun PreviewWeatherPage() {
 
-    // WeatherHome(city = "London", data = sampleMausamData)
-    HomeLayout(data = sampleMausamData, city = "London")
+     WeatherHome(city = "London", data = sampleMausamData)
+    //HomeLayout(data = sampleMausamData, city = "London")
+    //HorizontalCard(data = sampleMausamData)
+    
 
 
 }
