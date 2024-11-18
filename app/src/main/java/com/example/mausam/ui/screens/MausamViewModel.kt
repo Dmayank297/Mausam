@@ -1,5 +1,8 @@
 package com.example.mausam.ui.screens
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +17,7 @@ sealed interface MausamUiState {
     data class Success(val data: MausamData): MausamUiState
     class Error(val message: String? = null) : MausamUiState
     object Loading: MausamUiState
+
 }
 
 
@@ -24,6 +28,16 @@ class MausamViewModel: ViewModel() {
     val mausamResult : LiveData<MausamUiState> get()= _mausamResult
 
     private val apikey = "f9dad30ae3014e7dae1171645241710"
+
+
+    private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.DrawerScreen.Help)
+
+    val currentScreen: MutableState<Screen> get() = _currentScreen
+
+
+    fun setCurrentScreen(screen: Screen) {
+        _currentScreen.value = screen
+    }
 
     fun getData(city:String) {
         _mausamResult.value = MausamUiState.Loading
