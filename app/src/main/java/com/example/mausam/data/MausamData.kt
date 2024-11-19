@@ -30,7 +30,7 @@ data class MausamData(
         @PrimaryKey(autoGenerate = true)
         val id: Int = 0,
         @SerializedName("cloud")
-        val cloud: String,
+        val cloud: Int,
         @SerializedName("condition")
         val condition: Condition?,
         @SerializedName("dewpoString_c")
