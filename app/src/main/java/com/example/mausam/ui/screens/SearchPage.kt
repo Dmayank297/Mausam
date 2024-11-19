@@ -1,6 +1,5 @@
 package com.example.mausam.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -34,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,16 +38,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.mausam.data.MausamData
+import com.example.mausam.model.MausamUiState
+import com.example.mausam.model.MausamViewModel
+
 
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
-
+    navController: NavHostController
     ) {
-
-    val viewModel: MausamViewModel = viewModel()
     var city by remember { mutableStateOf("") }
-//    val weatherResult by viewModel.weatherResult.collectAsState()
+    val viewModel: MausamViewModel = viewModel()
     val weatherResult = viewModel.mausamResult.observeAsState()
 
 
@@ -90,7 +87,7 @@ fun SearchPage(
             IconButton(onClick = {
                 // Call viewModel to fetch city data
                 viewModel.getData(city)
-                Log.i("city", city)
+
             }) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -103,32 +100,37 @@ fun SearchPage(
                 CircularProgressIndicator()
             }
             is MausamUiState.Success -> {
-                WeatherCard(city = city, result.data)
+                WeatherCard(city = city, result.data, navController)
             }
 
             is MausamUiState.Error -> {
                 Text(text = "Couldn't fetch the data! Check Internet Connection.")
             }
             null -> {
-
+                Text(text = "Search The City!",
+                    color = Color.Magenta,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily.Serif,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                )
             }
         }
     }
+
+
+
 }
+
 
 @Composable
 fun WeatherCard(
     city : String,
     data: MausamData,
-
+    navController: NavHostController
 ) {
-    val context = LocalContext.current
-    val navController: NavHostController = NavHostController(context)
-    // Make a card that show the weather and when clicked then it navigate to weatherHome Screen
-    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
 
-    }
-    Column (
+    // Make a card that show the weather and when clicked then it navigate to weatherHome Screen
+Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
@@ -137,7 +139,8 @@ fun WeatherCard(
         Card(
             modifier = Modifier
                 .clickable {
-                    navController.navigate("weatherHome")
+                    // Navigate to WeatherScreen
+                    navController.navigate(Screen.HomeScreen.Weather_Home.hRoute + "/$city")
                 }
                 .fillMaxWidth()
                 .padding(18.dp)
@@ -167,5 +170,6 @@ fun WeatherCard(
                 Text(text = "${data.current.tempC} ° C", fontSize = 20.sp, fontFamily = FontFamily.Serif)
             }
         }
+
     }
 }

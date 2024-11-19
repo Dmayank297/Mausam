@@ -1,14 +1,15 @@
-package com.example.mausam.ui.screens
+package com.example.mausam.model
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mausam.Constant
 import com.example.mausam.data.MausamData
 import com.example.mausam.network.MausamApi
+import com.example.mausam.ui.screens.Screen
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -27,7 +28,7 @@ class MausamViewModel: ViewModel() {
     private val _mausamResult = MutableLiveData<MausamUiState>()
     val mausamResult : LiveData<MausamUiState> get()= _mausamResult
 
-    private val apikey = "f9dad30ae3014e7dae1171645241710"
+    private val apikey = Constant.api_key
 
 
     private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.DrawerScreen.Help)
@@ -45,10 +46,7 @@ class MausamViewModel: ViewModel() {
 
             try {
                 val response = MausamApi.retrofitService.getMausam(apikey, city = city)
-
                 _mausamResult.value = MausamUiState.Success(data = response)
-
-
             } catch (e: IOException) {
                 _mausamResult.value = MausamUiState.Error(message = "Error in Fetching Data!")
 
