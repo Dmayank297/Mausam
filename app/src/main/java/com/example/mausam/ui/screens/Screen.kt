@@ -5,6 +5,20 @@ import com.example.mausam.R
 
 sealed class Screen(val route: String, val title: String)  {
 
+    sealed class HomeScreen(
+        val hRoute: String,
+        val hTitle: String
+    ):Screen(hRoute,hTitle) {
+        data object Search_Page: HomeScreen (
+            "search_page",
+            "Search_Page"
+        )
+        data object Weather_Home: HomeScreen (
+            "weather_home",
+            "Weather_Home"
+        )
+    }
+
     sealed class DrawerScreen(val dRoute: String, val dTitle: String, @DrawableRes val Icon: Int
     ): Screen(dRoute, dTitle) {
         object Help: DrawerScreen(
@@ -20,6 +34,11 @@ sealed class Screen(val route: String, val title: String)  {
         )
     }
 }
+
+val screenInHome = listOf(
+    Screen.HomeScreen.Search_Page,
+    Screen.HomeScreen.Weather_Home
+)
 
 val screenInDrawer = listOf(
     Screen.DrawerScreen.Help,
